@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leaf Detection with Camera</title>
+<style>
+.section {
+  width: 500px;
+  margin: 40px auto;
+  border-radius: 12px;
+  border: 2px solid #4CAF50;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Header */
+.section h1 {
+  background: #4CAF50;
+  color: white;
+  text-align: center;
+  padding: 12px;
+  margin: 0;
+  font-size: 20px;
+  border-bottom: 2px solid #3e9142;
+}
+
+/* Upload Section */
+.upload-section {
+  padding: 15px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-box {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.upload-section input[type="file"] {
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.upload-section button {
+  margin: 5px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  background: #4CAF50;
+  color: white;
+  cursor: pointer;
+}
+
+/* Preview */
+#preview {
+  display: none;
+  margin-top: 10px;
+  width: 90%;
+  max-height: 200px;
+  border: 2px solid #4CAF50;
+  border-radius: 8px;
+}
+
+/* Camera Preview */
+#camera {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+#camera video, #camera canvas {
+  width: 90%;
+  border-radius: 8px;
+  border: 2px solid #4CAF50;
+}
+
+/* Results */
+.result-section {
+  padding: 15px;
+  background: #f9fff9;
+  border-top: 1px solid #ccc;
+}
+</style>
+</head>
+<body>
+
+<section id="leaf-detection" class="section">
+  <h1>🌱 Leaf Detection</h1>
+  <p style="text-align:center; padding:8px;">Upload or capture a leaf image to detect the leaf type, disease, and treatment.</p>
+
+  <!-- Upload Section -->
+  <div class="upload-section">
+    <div class="file-box">
+      <input type="file" id="leaf-image" accept="image/*">
+    </div>
+    <!-- Image Preview -->
+    <img id="preview" alt="Leaf Preview">
+
+    <button id="open-camera">📷 Open Camera</button>
+  </div>
+
+  <!-- Camera Section -->
+  <div id="camera">
+    <video id="video" autoplay playsinline></video>
+    <button id="capture-btn">📸 Capture</button>
+    <canvas id="canvas" style="display:none;"></canvas>
+  </div>
+
+  <!-- Detection Result -->
+  <div class="result-section" id="leaf-result" style="display:none;">
+    <h2>Detection Result</h2>
+    <p><strong>Leaf Name:</strong> <span id="leaf-name">-</span></p>
+    <p><strong>Disease:</strong> <span id="disease-name">-</span></p>
+    <p><strong>Pesticides:</strong> <span id="pesticides">-</span></p>
+    <p><strong>Treatment:</strong> <span id="treatment">-</span></p>
+  </div>
+
+<script>
+// ---------------- File Upload Preview ----------------
+const fileInput = document.getElementById("leaf-image");
+const previewImg = document.getElementById("preview");
+
+fileInput.addEventListener("change", (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      previewImg.src = e.target.result;
+      previewImg.style.display = "block";
+      runDetection(); // Run detection automatically
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+// ---------------- Camera Setup ----------------
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+const openCameraBtn = document.getElementById("open-camera");
+const captureBtn = document.getElementById("capture-btn");
+const cameraDiv = document.getElementById("camera");
+let stream = null;
+
+openCameraBtn.addEventListener("click", async () => {
+  cameraDiv.style.display = "flex";
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+    video.srcObject = stream;
+  } catch (err) {
+    alert("Camera access denied or not available.");
+  }
+});
+
+captureBtn.addEventListener("click", () => {
+  if (!stream) return;
+
+  // Capture image
+  const context = canvas.getContext("2d");
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  const capturedImage = canvas.toDataURL("image/png");
+
+  // Show preview
+  previewImg.src = capturedImage;
+  previewImg.style.display = "block";
+
+  // Stop camera
+  stream.getTracks().forEach(track => track.stop());
+  video.srcObject = null;
+  cameraDiv.style.display = "none";
+
+  // Run detection automatically
+  runDetection();
+});
+
+// ---------------- Leaf Detection ----------------
+function runDetection() {
+  const leaves = [
+    { leaf: "Tomato", disease: "Early Blight", pesticides: "Mancozeb 75% WP or Copper Oxychloride", treatment: "Spray Mancozeb (2.5g/litre) every 7–10 days. Remove affected leaves." },
+    { leaf: "Tomato", disease: "Late Blight", pesticides: "Metalaxyl + Mancozeb (Ridomil Gold)", treatment: "Apply Ridomil Gold (2g/litre) at first symptom. Ensure good drainage." },
+    { leaf: "Mango", disease: "Powdery Mildew", pesticides: "Sulphur dusting or Carbendazim spray", treatment: "Spray wettable sulphur (2g/litre) before flowering. Prune dense branches." },
+    { leaf: "Mango", disease: "Anthracnose", pesticides: "Copper Oxychloride or Carbendazim", treatment: "Spray Carbendazim (1g/litre) or Copper Oxychloride (3g/litre). Destroy fallen infected leaves." }
+  ];
+
+  // Random detection
+  const detected = leaves[Math.floor(Math.random() * leaves.length)];
+
+  document.getElementById("leaf-name").textContent = detected.leaf;
+  document.getElementById("disease-name").textContent = detected.disease;
+  document.getElementById("pesticides").textContent = detected.pesticides;
+  document.getElementById("treatment").textContent = detected.treatment;
+  document.getElementById("leaf-result").style.display = "block";
+}
+</script>
+</body>
+</html>

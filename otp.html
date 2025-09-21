@@ -1,0 +1,138 @@
+<!-- otp.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile Verification</title>
+<style>
+    .otp-container {
+    max-width: 400px;
+    margin: 100px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+.otp-container input {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+.otp-container button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 10px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+
+.otp-container button:hover{
+    background-color: #45a049;
+}
+
+/* Dashboard */
+.dashboard {
+    text-align: center;
+    padding: 50px;
+    background-image: url('background.jpg'); /* add your background image */
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+}
+
+.cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 50px;
+}
+
+.card {
+    background: rgba(255,255,255,0.9);
+    width: 250px;
+    height: 180px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+}
+
+.card h2 {
+    margin: 0;
+    color: #4CAF50;
+}
+
+.card p {
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media(max-width:768px){
+    .cards-container {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+</style>
+</head>
+
+<body>
+    <div class="otp-container">
+        <h2>Mobile Number Verification</h2>
+        <input type="text" id="mobile" placeholder="Enter Mobile Number">
+        <button id="send-otp">Send OTP</button>
+
+        <div id="otp-section" style="display:none;">
+            <input type="text" id="otp" placeholder="Enter OTP">
+            <button id="verify-otp">Verify OTP</button>
+        </div>
+
+        <p id="otp-msg"></p>
+    </div>
+
+    <script>
+        let generatedOTP = '';
+
+        document.getElementById("send-otp").addEventListener("click", function(){
+            const mobile = document.getElementById("mobile").value.trim();
+            if(mobile.length !== 10 || isNaN(mobile)){
+                alert("Enter valid 10-digit mobile number");
+                return;
+            }
+            // Simulate OTP generation
+            generatedOTP = Math.floor(1000 + Math.random() * 9000);
+            document.getElementById("otp-msg").textContent = `OTP sent: ${generatedOTP} (simulated)`;
+            document.getElementById("otp-section").style.display = 'block';
+        });
+
+        document.getElementById("verify-otp").addEventListener("click", function(){
+            const otpInput = document.getElementById("otp").value.trim();
+            if(otpInput === generatedOTP.toString()){
+                // redirect to main dashboard
+                window.location.href = "dashboard.html";
+            } else {
+                alert("Incorrect OTP. Try again!");
+            }
+        });
+    </script>
+</body>
+</html>

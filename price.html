@@ -1,0 +1,36 @@
+<!-- price.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Price Predictor</title>
+<link rel="stylesheet" href="style2.css">
+</head>
+<body>
+
+<section id="price-predictor" class="section">
+    <h1>Price Predictor</h1>
+    <p>Enter market and select crop to get price range.</p>
+
+    <input type="text" id="market" placeholder="Enter Market/Area">
+    <select id="crop">
+        <option value="">Select Crop</option>
+        <option value="Tomato">Tomato</option>
+        <option value="Potato">Potato</option>
+        <option value="Wheat">Wheat</option>
+        <option value="Rice">Rice</option>
+        <option value="Cotton">Cotton</option>
+    </select><br><center>
+    <button id="predict-btn">Predict Price</button></center>
+
+    <div class="price-result" id="price-result" style="display:none;">
+        <h2>Price Prediction</h2>
+        <p><strong>Max Price:</strong> <span id="max-price">50</span></p>
+        <p><strong>Min Price:</strong> <span id="min-price">20</span></p>
+    </div>
+</section>
+
+
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!-- splash.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synergy X</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #00c6ff, #0072ff, #00c6ff);
+        background-size: 400% 400%;
+        animation: gradientFlow 8s ease infinite;
+        font-family: "Poppins", sans-serif;
+    }
+
+    .splash-container {
+        text-align: center;
+        color: white;
+        animation: fadeIn 1.5s ease forwards;
+    }
+
+    .app-name {
+        font-size: 3.5rem;
+        font-weight: 700;
+        letter-spacing: 3px;
+        margin: 0;
+        opacity: 0;
+        transform: scale(0.5);
+        animation: zoomGlow 2s ease forwards;
+        text-shadow: 0 0 15px rgba(255,255,255,0.8),
+                     0 0 30px rgba(0,114,255,0.7),
+                     0 0 45px rgba(0,198,255,0.6);
+    }
+
+    .tagline {
+        font-size: 1.2rem;
+        margin-top: 15px;
+        opacity: 0;
+        animation: slideUp 1.5s ease forwards;
+        animation-delay: 2s;
+    }
+
+    /* Background animation */
+    @keyframes gradientFlow {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    /* App name zoom + glow */
+    @keyframes zoomGlow {
+        from { opacity: 0; transform: scale(0.5); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Tagline slide up */
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Container fade in */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+</style>
+</head>
+<body>
+    <div class="splash-container">
+        <h1 class="app-name">Synergy X</h1>
+        <p class="tagline">Connecting Ideas, Empowering Futures</p>
+    </div>
+
+    <script>
+        // Redirect after 5 seconds
+        setTimeout(function(){
+            window.location.href = "otp.html";
+        }, 5000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!-- chat.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agriculture Chatbot</title>
+<style>
+.section {
+  width: 450px;
+  height: 520px;
+  margin: 40px auto;
+  border-radius: 12px;
+  border: 2px solid #4CAF50;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
+}
+.section h1 {
+  background: #4CAF50;
+  color: white;
+  text-align: center;
+  padding: 12px;
+  margin: 0;
+  font-size: 20px;
+  border-bottom: 2px solid #3e9142;
+}
+.chatbot-container {
+  display: flex;
+  flex-direction: column;
+  height: 450px;
+  background: #fff;
+  border-top: 2px solid #4CAF50;
+}
+.chat-body {
+  flex: 1;
+  padding: 8px;
+  overflow-y: auto;
+  background: #f9fff9;
+}
+.chat-footer {
+  display: flex;
+  gap: 5px;
+  padding: 8px;
+  border-top: 1px solid #ccc;
+  align-items: center;
+}
+#chat-input {
+  flex: 1;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+#mic-btn, #send-btn {
+  padding: 6px 10px;
+  border: none;
+  background: #4CAF50;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+#language {
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+.user-msg {
+  text-align: right;
+  margin: 4px;
+  padding: 6px;
+  background: #d9fdd3;
+  border-radius: 6px;
+  display: inline-block;
+}
+.bot-msg {
+  text-align: left;
+  margin: 4px;
+  padding: 6px;
+  background: #e8e8e8;
+  border-radius: 6px;
+  display: inline-block;
+}
+</style>
+</head>
+<body>
+ <section id="leaf-detection" class="section">
+    <h1>🌱 ChatBot</h1>
+  <div class="chatbot-container">
+    <div class="chat-body" id="chat-body"></div>
+    <div class="chat-footer">
+      <select id="language">
+        <option value="en">English</option>
+        <option value="te">Telugu</option>
+      </select>
+      <input type="text" id="chat-input" placeholder="Type your message...">
+      <button id="mic-btn">🎤</button>
+      <button id="send-btn">Send</button>
+    </div>
+  </div>
+ </section>  
+
+<script>
+const chatBody = document.getElementById("chat-body");
+const chatInput = document.getElementById("chat-input");
+const sendBtn = document.getElementById("send-btn");
+const micBtn = document.getElementById("mic-btn");
+const languageSelect = document.getElementById("language");
+
+function addMessage(message, sender = "user") {
+  const msgDiv = document.createElement("div");
+  msgDiv.className = sender === "user" ? "user-msg" : "bot-msg";
+  msgDiv.textContent = message;
+  chatBody.appendChild(msgDiv);
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+// ---------- Bot Replies ----------
+function getBotResponse(userText, lang) {
+  userText = userText.toLowerCase();
+
+  let reply = (lang === "te") 
+    ? "నేను ఇంకా నేర్చుకుంటున్నాను 🌱. దయచేసి పంటలు, నీరు లేదా వ్యవసాయం గురించి స్పష్టంగా చెప్పండి." 
+    : "I’m still learning 🌱. Could you please be more specific?";
+
+  if (userText.includes("hello") || userText.includes("hi")) {
+    reply = (lang === "te") ? "హలో 👋! ఈరోజు మీకు వ్యవసాయంలో ఎలా సహాయం చేయగలను?" : 
+                               "Hello 👋! How can I help you with farming today?";
+  }
+  else if (userText.includes("fertilizer")) {
+    reply = (lang === "te") ? "మట్టిని పరీక్షించిన తర్వాత యూరియా, డ్యాప్, పొటాష్ వాడండి 🌱." :
+                              "Use fertilizers based on soil testing. Common ones are Urea, DAP, and Potash 🌱.";
+  }
+  else if (userText.includes("irrigation")) {
+    reply = (lang === "te") ? "డ్రిప్ సాగు నీటిని ఆదా చేస్తుంది మరియు దిగుబడి పెంచుతుంది 💧." :
+                              "Drip irrigation saves water and improves crop yield 💧.";
+  }
+  else if (userText.includes("wheat")) {
+    reply = (lang === "te") ? "గోధుమలు చల్లటి వాతావరణంలో, నీరు బాగా వదిలే నేలలో బాగా పెరుగుతాయి 🌾." :
+                              "Wheat grows best in cool weather with well-drained loamy soil 🌾.";
+  }
+  else if (userText.includes("rice")) {
+    reply = (lang === "te") ? "వరి నీరు నిలిచే మట్టిలో బాగా పెరుగుతుంది 🍚." :
+                              "Rice needs standing water and grows well in clayey soil 🍚.";
+  }
+  else if (userText.includes("pest")) {
+    reply = (lang === "te") ? "పురుగుల నియంత్రణకు వేప నూనె స్ప్రే లేదా బయో-పెస్టిసైడ్స్ వాడండి 🐛." :
+                              "To control pests, use neem oil spray or recommended bio-pesticides 🐛.";
+  }
+  else if (userText.includes("thank")) {
+    reply = (lang === "te") ? "మీకు స్వాగతం! సంతోషకరమైన వ్యవసాయం 🌱🚜." :
+                              "You're welcome! Happy farming 🌱🚜.";
+  }
+
+  return reply;
+}
+
+// ---------- Voice Output ----------
+function speak(text, lang) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = (lang === "te") ? "te-IN" : "en-US";
+  speechSynthesis.speak(utterance);
+}
+
+// ---------- Send Button ----------
+sendBtn.addEventListener("click", () => {
+  const text = chatInput.value.trim();
+  if (text !== "") {
+    const lang = languageSelect.value;
+    addMessage(text, "user");
+    chatInput.value = "";
+    setTimeout(() => {
+      const reply = getBotResponse(text, lang);
+      addMessage(reply, "bot");
+      speak(reply, lang); // Voice reply
+    }, 500);
+  }
+});
+
+// ---------- Enter Key ----------
+chatInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") sendBtn.click();
+});
+
+// ---------- Voice Input ----------
+let recognition;
+if ("webkitSpeechRecognition" in window) {
+  recognition = new webkitSpeechRecognition();
+  recognition.continuous = false;
+  recognition.interimResults = false;
+}
+
+micBtn.addEventListener("click", () => {
+  if (recognition) {
+    const lang = languageSelect.value;
+    recognition.lang = (lang === "te") ? "te-IN" : "en-US"; // ✅ switch input language
+    recognition.start();
+    recognition.onresult = function(event) {
+      chatInput.value = event.results[0][0].transcript;
+    };
+  } else {
+    alert("Speech recognition not supported in this browser.");
+  }
+});
+</script>
+</body>
+</html>
